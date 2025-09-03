@@ -39,7 +39,7 @@ const Diagnosis = () => {
       .filter(([_, severity]) => severity && severity !== "none")
       .map(([symptomId, severity]) => {
         const symptom = symptoms.find(s => s.id === symptomId);
-        return `${symptom?.label}: ${severity}`;
+        return { symptom: symptom?.label || symptomId, severity };
       });
 
     if (reportedSymptoms.length === 0) {
@@ -47,7 +47,12 @@ const Diagnosis = () => {
       return;
     }
     
-    alert(`Disease Prediction Analysis\n\nReported Symptoms:\n${reportedSymptoms.join("\n")}\n\nThis is a demonstration. In a real application, this would use Bayesian reasoning to predict possible diseases based on symptom severity levels.`);
+    // Navigate to results page with symptom data
+    navigate("/results", { 
+      state: { 
+        symptoms: reportedSymptoms 
+      } 
+    });
   };
 
   return (
