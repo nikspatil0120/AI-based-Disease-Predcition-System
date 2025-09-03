@@ -1,57 +1,59 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
-import { ArrowLeft, Stethoscope, Activity, Heart } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ArrowLeft, Stethoscope, Activity, Thermometer, Zap, AlertCircle, User, Snowflake, Palette } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-const commonSymptoms = [
-  { id: "fever", label: "Fever", category: "General" },
-  { id: "headache", label: "Headache", category: "Neurological" },
-  { id: "cough", label: "Cough", category: "Respiratory" },
-  { id: "sore_throat", label: "Sore Throat", category: "Respiratory" },
-  { id: "fatigue", label: "Fatigue", category: "General" },
-  { id: "nausea", label: "Nausea", category: "Digestive" },
-  { id: "stomach_pain", label: "Stomach Pain", category: "Digestive" },
-  { id: "muscle_aches", label: "Muscle Aches", category: "Musculoskeletal" },
-  { id: "shortness_breath", label: "Shortness of Breath", category: "Respiratory" },
-  { id: "chest_pain", label: "Chest Pain", category: "Cardiovascular" },
-  { id: "dizziness", label: "Dizziness", category: "Neurological" },
-  { id: "skin_rash", label: "Skin Rash", category: "Dermatological" }
+const symptoms = [
+  { id: "fever", label: "Fever", icon: Thermometer },
+  { id: "cough", label: "Cough", icon: Activity },
+  { id: "headache", label: "Headache", icon: AlertCircle },
+  { id: "fatigue", label: "Fatigue", icon: Zap },
+  { id: "body_pain", label: "Body Pain", icon: User },
+  { id: "nausea", label: "Nausea", icon: AlertCircle },
+  { id: "cold_shivers", label: "Cold/Shivers", icon: Snowflake },
+  { id: "rash", label: "Rash", icon: Palette }
 ];
 
-const categories = ["General", "Respiratory", "Neurological", "Digestive", "Cardiovascular", "Musculoskeletal", "Dermatological"];
+const severityOptions = [
+  { value: "none", label: "None" },
+  { value: "mild", label: "Mild" },
+  { value: "moderate", label: "Moderate" },
+  { value: "severe", label: "Severe" }
+];
 
 const Diagnosis = () => {
   const navigate = useNavigate();
-  const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
+  const [symptomSeverities, setSymptomSeverities] = useState<Record<string, string>>({});
 
-  const handleSymptomChange = (symptomId: string, checked: boolean) => {
-    if (checked) {
-      setSelectedSymptoms([...selectedSymptoms, symptomId]);
-    } else {
-      setSelectedSymptoms(selectedSymptoms.filter(id => id !== symptomId));
-    }
+  const handleSymptomChange = (symptomId: string, severity: string) => {
+    setSymptomSeverities(prev => ({
+      ...prev,
+      [symptomId]: severity
+    }));
   };
 
-  const handleAnalyze = () => {
-    // For now, just show an alert with selected symptoms
-    if (selectedSymptoms.length === 0) {
-      alert("Please select at least one symptom to analyze.");
+  const handleSubmit = () => {
+    const reportedSymptoms = Object.entries(symptomSeverities)
+      .filter(([_, severity]) => severity && severity !== "none")
+      .map(([symptomId, severity]) => {
+        const symptom = symptoms.find(s => s.id === symptomId);
+        return `${symptom?.label}: ${severity}`;
+      });
+
+    if (reportedSymptoms.length === 0) {
+      alert("Please select severity levels for at least one symptom to analyze.");
       return;
     }
     
-    const selectedLabels = commonSymptoms
-      .filter(symptom => selectedSymptoms.includes(symptom.id))
-      .map(symptom => symptom.label);
-    
-    alert(`Analyzing symptoms: ${selectedLabels.join(", ")}\n\nThis is a demo. In a real application, this would use Bayesian reasoning to predict possible diseases.`);
+    alert(`Disease Prediction Analysis\n\nReported Symptoms:\n${reportedSymptoms.join("\n")}\n\nThis is a demonstration. In a real application, this would use Bayesian reasoning to predict possible diseases based on symptom severity levels.`);
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-accent/20">
       <div className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-3xl mx-auto">
           {/* Header */}
           <div className="flex items-center gap-4 mb-8">
             <Button 
@@ -73,89 +75,102 @@ const Diagnosis = () => {
               </div>
             </div>
             <h1 className="text-4xl font-bold text-foreground mb-4">
-              Symptom Analysis
+              Disease Prediction Form
             </h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Select your symptoms below and our AI will analyze them using Bayesian reasoning to predict possible conditions.
+              Please rate the severity of each symptom you're experiencing. Our AI will analyze your responses using Bayesian reasoning.
             </p>
           </div>
 
-          {/* Symptoms Selection */}
-          <div className="grid gap-8">
-            {categories.map(category => {
-              const categorySymptoms = commonSymptoms.filter(symptom => symptom.category === category);
-              return (
-                <Card key={category} className="shadow-[var(--card-shadow)]">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      {category === "Cardiovascular" && <Heart className="w-5 h-5 text-primary" />}
-                      {category === "Respiratory" && <Activity className="w-5 h-5 text-primary" />}
-                      {category !== "Cardiovascular" && category !== "Respiratory" && <Stethoscope className="w-5 h-5 text-primary" />}
-                      {category} Symptoms
-                    </CardTitle>
-                    <CardDescription>
-                      Select any {category.toLowerCase()} symptoms you're experiencing
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {categorySymptoms.map(symptom => (
-                        <div key={symptom.id} className="flex items-center space-x-2">
-                          <Checkbox
-                            id={symptom.id}
-                            checked={selectedSymptoms.includes(symptom.id)}
-                            onCheckedChange={(checked) => handleSymptomChange(symptom.id, checked as boolean)}
-                          />
-                          <label
-                            htmlFor={symptom.id}
-                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
-                          >
-                            {symptom.label}
-                          </label>
+          {/* Main Form Card */}
+          <Card className="shadow-[var(--card-shadow)] border-0 bg-card/80 backdrop-blur-sm">
+            <CardHeader className="text-center pb-6">
+              <CardTitle className="text-2xl font-semibold">Symptom Assessment</CardTitle>
+              <CardDescription className="text-base">
+                Rate each symptom from None to Severe based on your current condition
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Symptoms Form */}
+              <div className="grid gap-6">
+                {symptoms.map((symptom) => {
+                  const IconComponent = symptom.icon;
+                  return (
+                    <div key={symptom.id} className="space-y-2">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-primary/10 rounded-lg">
+                          <IconComponent className="w-5 h-5 text-primary" />
                         </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-
-          {/* Analysis Section */}
-          {selectedSymptoms.length > 0 && (
-            <Card className="mt-8 shadow-[var(--card-shadow)]">
-              <CardHeader>
-                <CardTitle>Selected Symptoms</CardTitle>
-                <CardDescription>
-                  You have selected {selectedSymptoms.length} symptom{selectedSymptoms.length !== 1 ? 's' : ''}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-wrap gap-2 mb-6">
-                  {selectedSymptoms.map(symptomId => {
-                    const symptom = commonSymptoms.find(s => s.id === symptomId);
-                    return (
-                      <span
-                        key={symptomId}
-                        className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-medium"
+                        <label className="text-sm font-medium text-foreground">
+                          {symptom.label}
+                        </label>
+                      </div>
+                      <Select 
+                        value={symptomSeverities[symptom.id] || ""} 
+                        onValueChange={(value) => handleSymptomChange(symptom.id, value)}
                       >
-                        {symptom?.label}
-                      </span>
-                    );
-                  })}
-                </div>
+                        <SelectTrigger className="w-full bg-background border-border hover:border-primary/50 transition-colors">
+                          <SelectValue placeholder="Select severity level" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-background border-border shadow-lg z-50">
+                          {severityOptions.map((option) => (
+                            <SelectItem 
+                              key={option.value} 
+                              value={option.value}
+                              className="hover:bg-accent hover:text-accent-foreground cursor-pointer"
+                            >
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Submit Button */}
+              <div className="pt-8">
                 <Button 
-                  onClick={handleAnalyze}
+                  onClick={handleSubmit}
                   variant="medical"
                   size="lg"
-                  className="w-full md:w-auto"
+                  className="w-full h-14 text-lg font-semibold"
                 >
-                  <Activity className="w-5 h-5 mr-2" />
-                  Analyze Symptoms
+                  <Activity className="w-6 h-6 mr-3" />
+                  Analyze Symptoms & Predict Disease
                 </Button>
-              </CardContent>
-            </Card>
-          )}
+              </div>
+
+              {/* Summary */}
+              {Object.values(symptomSeverities).some(severity => severity && severity !== "none") && (
+                <div className="pt-6 border-t border-border/50">
+                  <h3 className="text-lg font-semibold mb-4 text-foreground">Current Assessment Summary</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {Object.entries(symptomSeverities)
+                      .filter(([_, severity]) => severity && severity !== "none")
+                      .map(([symptomId, severity]) => {
+                        const symptom = symptoms.find(s => s.id === symptomId);
+                        const severityColor = 
+                          severity === "severe" ? "bg-red-100 text-red-800 border-red-200" :
+                          severity === "moderate" ? "bg-orange-100 text-orange-800 border-orange-200" :
+                          severity === "mild" ? "bg-yellow-100 text-yellow-800 border-yellow-200" :
+                          "bg-gray-100 text-gray-800 border-gray-200";
+                        
+                        return (
+                          <div
+                            key={symptomId}
+                            className={`px-3 py-2 rounded-lg border text-sm font-medium ${severityColor}`}
+                          >
+                            {symptom?.label}: {severity.charAt(0).toUpperCase() + severity.slice(1)}
+                          </div>
+                        );
+                      })}
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>
