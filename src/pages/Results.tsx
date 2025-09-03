@@ -11,69 +11,123 @@ interface Disease {
   probability: number;
   severity: "low" | "moderate" | "high";
   description: string;
-  commonCauses: string[];
+  common_causes: string[];
 }
 
-// Mock disease prediction results based on symptoms
-const mockDiseases: Disease[] = [
-  {
-    name: "Common Cold",
-    probability: 78,
-    severity: "low",
-    description: "A viral infection of the upper respiratory tract that is generally harmless.",
-    commonCauses: ["Rhinovirus", "Coronavirus", "Seasonal transmission"]
-  },
-  {
-    name: "Seasonal Flu",
-    probability: 65,
-    severity: "moderate", 
-    description: "Influenza is a viral infection that attacks the respiratory system.",
-    commonCauses: ["Influenza A virus", "Influenza B virus", "Seasonal outbreak"]
-  },
-  {
-    name: "Viral Gastroenteritis",
-    probability: 42,
-    severity: "moderate",
-    description: "Inflammation of the stomach and intestines caused by viral infection.",
-    commonCauses: ["Norovirus", "Rotavirus", "Contaminated food/water"]
-  },
-  {
-    name: "Migraine",
-    probability: 28,
-    severity: "moderate",
-    description: "A neurological condition characterized by intense headaches.",
-    commonCauses: ["Stress", "Hormonal changes", "Dietary triggers"]
-  },
-  {
-    name: "Tension Headache",
-    probability: 15,
-    severity: "low",
-    description: "The most common type of headache caused by muscle tension.",
-    commonCauses: ["Stress", "Poor posture", "Eye strain"]
-  }
-];
+interface PredictionResponse {
+  success: boolean;
+  input_symptoms: Record<string, string>;
+  most_probable_disease: string;
+  most_probable_probability: number;
+  top_diseases: Disease[];
+  all_probabilities: Record<string, number>;
+  analysis_metadata: {
+    total_diseases_analyzed: number;
+    symptoms_provided: number;
+    model_type: string;
+  };
+}
+
+// Symptom mapping for display
+const symptomLabels: Record<string, string> = {
+  "Fever": "Fever",
+  "Cough": "Cough", 
+  "Headache": "Headache",
+  "Fatigue": "Fatigue / Weakness",
+  "Body Pain": "Body Pain / Muscle Ache",
+  "Sore Throat": "Sore Throat",
+  "Runny Nose": "Runny Nose",
+  "Difficulty Breathing": "Difficulty Breathing",
+  "Chills": "Chills / Sweating",
+  "Loss of Taste/Smell": "Loss of Taste/Smell",
+  "Nausea": "Nausea / Vomiting",
+  "Chest Pain": "Chest Pain",
+  "Dizziness": "Dizziness",
+  "Confusion": "Confusion / Mental Fog"
+};
+
+// Disease name mapping for better display
+const diseaseLabels: Record<string, string> = {
+  "Common Cold": "Common Cold",
+  "Influenza": "Influenza",
+  "Malaria": "Malaria",
+  "Dengue": "Dengue",
+  "Typhoid": "Typhoid",
+  "Pneumonia": "Pneumonia",
+  "COVID-19": "COVID-19",
+  "Asthma": "Asthma",
+  "Tuberculosis": "Tuberculosis",
+  "Diabetes": "Diabetes",
+  "Gastroenteritis": "Gastroenteritis (Stomach Flu)",
+  "Migraine": "Migraine",
+  "Anemia": "Anemia",
+  "Allergic Rhinitis": "Allergic Rhinitis (Hay Fever)"
+};
 
 const Results = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [symptoms, setSymptoms] = useState<Array<{symptom: string, severity: string}>>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [predictionData, setPredictionData] = useState<PredictionResponse | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Get symptoms from navigation state
-    const symptomData = location.state?.symptoms || [];
-    setSymptoms(symptomData);
-    
-    // Simulate analysis time
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
+    const fetchPrediction = async () => {
+      // Get symptoms from navigation state
+      const symptomData = location.state?.symptoms || [];
+      console.log('Symptom data received:', symptomData);
+      setSymptoms(symptomData);
+      
+      if (symptomData.length === 0) {
+        console.log('No symptoms provided, redirecting to diagnosis');
+        setError("No symptoms provided for analysis. Please go back and select symptoms.");
+        setIsLoading(false);
+        return;
+      }
 
-    return () => clearTimeout(timer);
+      try {
+        // Convert symptoms to API format
+        const apiSymptoms: Record<string, string> = {};
+        symptomData.forEach((item: {symptom: string, severity: string}) => {
+          apiSymptoms[item.symptom] = item.severity;
+        });
+        
+        console.log('API symptoms being sent:', apiSymptoms);
+
+        // Call backend API
+        const response = await fetch('http://172.16.238.69:5000/api/predict', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ symptoms: apiSymptoms }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`API request failed: ${response.status}`);
+        }
+
+        const data: PredictionResponse = await response.json();
+        
+        if (data.success) {
+          setPredictionData(data);
+        } else {
+          throw new Error('Prediction failed');
+        }
+      } catch (err) {
+        console.error('Prediction error:', err);
+        setError(err instanceof Error ? err.message : 'Failed to get prediction');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchPrediction();
   }, [location.state]);
 
-  const topDisease = mockDiseases[0];
-  const alternativeDiseases = mockDiseases.slice(1);
+  const topDisease = predictionData?.top_diseases[0];
+  const alternativeDiseases = predictionData?.top_diseases.slice(1) || [];
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
@@ -104,6 +158,72 @@ const Results = () => {
           </div>
           <div className="w-64 mx-auto">
             <Progress value={75} className="h-2" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background to-accent/20 flex items-center justify-center">
+        <div className="text-center space-y-6 animate-fade-in max-w-md mx-auto">
+          <div className="p-4 bg-red-100 rounded-full mx-auto w-fit">
+            <AlertTriangle className="w-12 h-12 text-red-600" />
+          </div>
+          <div className="space-y-2">
+            <h2 className="text-2xl font-semibold text-foreground">Analysis Failed</h2>
+            <p className="text-muted-foreground">{error}</p>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-4">
+            <Button 
+              onClick={() => navigate("/diagnosis")}
+              variant="medical"
+              size="lg"
+            >
+              <ArrowLeft className="w-5 h-5 mr-2" />
+              Go to Diagnosis
+            </Button>
+            <Button 
+              onClick={() => navigate("/")}
+              variant="outline"
+              size="lg"
+            >
+              Return to Home
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!predictionData || !topDisease) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background to-accent/20 flex items-center justify-center">
+        <div className="text-center space-y-6 animate-fade-in">
+          <div className="p-4 bg-muted rounded-full mx-auto w-fit">
+            <Info className="w-12 h-12 text-muted-foreground" />
+          </div>
+          <div className="space-y-2">
+            <h2 className="text-2xl font-semibold text-foreground">No Results Available</h2>
+            <p className="text-muted-foreground">Please go through the diagnosis process to get predictions.</p>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-4">
+            <Button 
+              onClick={() => navigate("/diagnosis")}
+              variant="medical"
+              size="lg"
+            >
+              <ArrowLeft className="w-5 h-5 mr-2" />
+              Start Diagnosis
+            </Button>
+            <Button 
+              onClick={() => navigate("/")}
+              variant="outline"
+              size="lg"
+            >
+              Return to Home
+            </Button>
           </div>
         </div>
       </div>
@@ -165,7 +285,7 @@ const Results = () => {
                       variant="secondary" 
                       className="px-3 py-1"
                     >
-                      {item.symptom}: {item.severity.charAt(0).toUpperCase() + item.severity.slice(1)}
+                      {symptomLabels[item.symptom] || item.symptom}: {item.severity.charAt(0).toUpperCase() + item.severity.slice(1)}
                     </Badge>
                   ))}
                 </div>
@@ -185,20 +305,20 @@ const Results = () => {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="text-center">
-                <h2 className="text-4xl font-bold text-foreground mb-2">{topDisease.name}</h2>
-                <div className="flex items-center justify-center gap-4 mb-4">
-                  <span className={`text-3xl font-bold ${getProbabilityColor(topDisease.probability)}`}>
-                    {topDisease.probability}%
-                  </span>
-                  <Badge className={getSeverityColor(topDisease.severity)} variant="outline">
-                    {topDisease.severity.charAt(0).toUpperCase() + topDisease.severity.slice(1)} Risk
-                  </Badge>
-                </div>
-                <Progress 
-                  value={topDisease.probability} 
-                  className="w-full max-w-md mx-auto h-3 mb-4"
-                />
+                             <div className="text-center">
+                 <h2 className="text-4xl font-bold text-foreground mb-2">{diseaseLabels[topDisease.name] || topDisease.name}</h2>
+                                                  <div className="flex items-center justify-center gap-4 mb-4">
+                   <span className={`text-3xl font-bold ${getProbabilityColor(topDisease.probability * 100)}`}>
+                     {(topDisease.probability * 100).toFixed(2)}%
+                   </span>
+                   <Badge className={getSeverityColor(topDisease.severity)} variant="outline">
+                     {topDisease.severity.charAt(0).toUpperCase() + topDisease.severity.slice(1)} Risk
+                   </Badge>
+                 </div>
+                 <Progress 
+                   value={topDisease.probability * 100} 
+                   className="w-full max-w-md mx-auto h-3 mb-4"
+                 />
               </div>
               
               <div className="bg-background/50 rounded-lg p-4 space-y-3">
@@ -208,7 +328,7 @@ const Results = () => {
                 <div>
                   <h4 className="font-semibold text-foreground mb-2">Common Causes:</h4>
                   <div className="flex flex-wrap gap-2">
-                    {topDisease.commonCauses.map((cause, index) => (
+                    {topDisease.common_causes.map((cause, index) => (
                       <Badge key={index} variant="outline" className="text-xs">
                         {cause}
                       </Badge>
@@ -240,29 +360,57 @@ const Results = () => {
                     <div className="flex items-center justify-center w-8 h-8 rounded-full bg-muted text-muted-foreground font-semibold text-sm">
                       {index + 2}
                     </div>
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-foreground mb-1">{disease.name}</h3>
-                      <p className="text-sm text-muted-foreground">{disease.description}</p>
-                    </div>
+                                         <div className="flex-1">
+                       <h3 className="font-semibold text-foreground mb-1">{diseaseLabels[disease.name] || disease.name}</h3>
+                       <p className="text-sm text-muted-foreground">{disease.description}</p>
+                     </div>
                   </div>
                   <div className="flex items-center gap-3">
                     <Badge className={getSeverityColor(disease.severity)} variant="outline">
                       {disease.severity}
                     </Badge>
-                    <div className="text-right">
-                      <span className={`text-xl font-bold ${getProbabilityColor(disease.probability)}`}>
-                        {disease.probability}%
-                      </span>
-                      <Progress 
-                        value={disease.probability} 
-                        className="w-24 h-2 mt-1"
-                      />
-                    </div>
+                                                              <div className="text-right">
+                       <span className={`text-xl font-bold ${getProbabilityColor(disease.probability * 100)}`}>
+                         {(disease.probability * 100).toFixed(2)}%
+                       </span>
+                       <Progress 
+                         value={disease.probability * 100} 
+                         className="w-24 h-2 mt-1"
+                       />
+                     </div>
                   </div>
                 </div>
               ))}
             </CardContent>
           </Card>
+
+          {/* Analysis Metadata */}
+          {predictionData.analysis_metadata && (
+            <Card className="mt-8 shadow-[var(--card-shadow)] border-0 bg-card/80 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Info className="w-5 h-5 text-primary" />
+                  Analysis Details
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                  <div className="text-center p-3 bg-background/50 rounded-lg">
+                    <div className="font-semibold text-foreground">{predictionData.analysis_metadata.total_diseases_analyzed}</div>
+                    <div className="text-muted-foreground">Diseases Analyzed</div>
+                  </div>
+                  <div className="text-center p-3 bg-background/50 rounded-lg">
+                    <div className="font-semibold text-foreground">{predictionData.analysis_metadata.symptoms_provided}</div>
+                    <div className="text-muted-foreground">Symptoms Provided</div>
+                  </div>
+                  <div className="text-center p-3 bg-background/50 rounded-lg">
+                    <div className="font-semibold text-foreground">{predictionData.analysis_metadata.model_type}</div>
+                    <div className="text-muted-foreground">Model Type</div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Disclaimer */}
           <div className="mt-8 p-4 bg-muted/50 rounded-lg border border-border/50">

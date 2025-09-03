@@ -1,73 +1,130 @@
-# Welcome to your Lovable project
+# AI-Based Disease Prediction System
 
-## Project info
+A comprehensive web application that uses Bayesian inference to predict diseases based on symptom analysis. The system combines a React frontend with a Flask backend API to provide accurate disease predictions using medical knowledge and conditional probability tables.
 
-**URL**: https://lovable.dev/projects/82468dc9-bb8a-4966-b1b6-15cd97f79c53
+## 🏥 Features
 
-## How can I edit this code?
+- **AI-Powered Analysis**: Advanced Bayesian reasoning algorithms analyze symptoms with medical precision
+- **14 Diseases**: Common Cold, Influenza, Malaria, Dengue, Typhoid, Pneumonia, COVID-19, Asthma, Tuberculosis, Diabetes, Gastroenteritis, Migraine, Anemia, Allergic Rhinitis
+- **14 Symptoms**: Comprehensive symptom set including Fever, Cough, Headache, Fatigue, Body Pain, and more
+- **Severity Levels**: None, Mild, Moderate, Severe for each symptom
+- **Real-time Predictions**: Instant analysis and predictions using Bayesian networks
+- **Professional UI**: Medical-themed design with modern, responsive interface
+- **Detailed Results**: Disease probabilities, descriptions, common causes, and severity assessments
 
-There are several ways of editing your application.
+## 🛠️ Technology Stack
 
-**Use Lovable**
+### Frontend
+- **React 18** with TypeScript
+- **Vite** for fast development and building
+- **shadcn/ui** components with Radix UI primitives
+- **Tailwind CSS** for styling
+- **React Router DOM** for navigation
+- **React Query** for data fetching
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/82468dc9-bb8a-4966-b1b6-15cd97f79c53) and start prompting.
+### Backend
+- **Flask** Python web framework
+- **Bayesian Network** for disease prediction
+- **Conditional Probability Tables** (140 CPTs)
+- **CORS** support for frontend integration
+- **RESTful API** design
 
-Changes made via Lovable will be committed automatically to this repo.
+## 🚀 Quick Start
 
-**Use your preferred IDE**
+### Prerequisites
+- Node.js (v16 or higher)
+- Python (v3.8 or higher)
+- npm or yarn
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Installation
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+1. **Clone the repository**
+```bash
+git clone <YOUR_REPO_URL>
+cd AI-based-Disease-Predcition-System
 ```
 
-**Edit a file directly in GitHub**
+2. **Backend Setup**
+```bash
+cd backend
+pip install -r requirements.txt
+python app.py
+```
+Backend will be available at `http://localhost:5000`
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+3. **Frontend Setup**
+```bash
+cd ..
+npm install
+npm run dev
+```
+Frontend will be available at `http://localhost:5173`
 
-**Use GitHub Codespaces**
+## 📊 How It Works
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+1. **Symptom Selection**: Users select from 14 symptoms and rate their severity
+2. **API Processing**: Frontend sends symptom data to Flask backend
+3. **Bayesian Inference**: Backend uses conditional probability tables to calculate disease probabilities
+4. **Results Display**: Frontend shows top predictions with detailed medical information
 
-## What technologies are used for this project?
+## 🔬 Bayesian Model
 
-This project is built with:
+The system uses a Bayesian network with:
+- **Prior Probabilities**: Equal probability for all diseases (1/14)
+- **Conditional Probability Tables**: 196 CPTs (14 diseases × 14 symptoms)
+- **Bayes' Theorem**: P(Disease|Symptoms) ∝ P(Symptoms|Disease) × P(Disease)
+- **Normalization**: Probabilities sum to 1
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## 📡 API Endpoints
 
-## How can I deploy this project?
+- `GET /health` - Health check
+- `GET /api/diseases` - List all diseases
+- `GET /api/symptoms` - List all symptoms
+- `GET /api/disease-info/<name>` - Get disease details
+- `POST /api/predict` - Predict disease from symptoms
+- `POST /api/batch-predict` - Batch predictions
 
-Simply open [Lovable](https://lovable.dev/projects/82468dc9-bb8a-4966-b1b6-15cd97f79c53) and click on Share -> Publish.
+## 🧪 Testing
 
-## Can I connect a custom domain to my Lovable project?
+Test the backend API:
+```bash
+cd backend
+python test_api.py
+```
 
-Yes, you can!
+## 📁 Project Structure
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+```
+AI-based-Disease-Predcition-System/
+├── backend/
+│   ├── app.py                 # Flask API server
+│   ├── bayesian_model.py      # Bayesian inference model
+│   ├── test_api.py           # API test script
+│   ├── requirements.txt      # Python dependencies
+│   └── README.md            # Backend documentation
+├── src/
+│   ├── pages/
+│   │   ├── Index.tsx         # Home page
+│   │   ├── Diagnosis.tsx     # Symptom selection
+│   │   └── Results.tsx       # Prediction results
+│   ├── components/ui/        # UI components
+│   └── ...
+├── SETUP.md                  # Detailed setup guide
+└── README.md                 # This file
+```
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+## ⚠️ Medical Disclaimer
+
+This system is for educational and demonstration purposes only. It should not be used as a substitute for professional medical advice, diagnosis, or treatment. Always consult with qualified healthcare professionals for medical concerns.
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
+
+## 📄 License
+
+This project is open source and available under the [MIT License](LICENSE).

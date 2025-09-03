@@ -6,21 +6,27 @@ import { ArrowLeft, Stethoscope, Activity, Thermometer, Zap, AlertCircle, User, 
 import { useNavigate } from "react-router-dom";
 
 const symptoms = [
-  { id: "fever", label: "Fever", icon: Thermometer },
-  { id: "cough", label: "Cough", icon: Activity },
-  { id: "headache", label: "Headache", icon: AlertCircle },
-  { id: "fatigue", label: "Fatigue", icon: Zap },
-  { id: "body_pain", label: "Body Pain", icon: User },
-  { id: "nausea", label: "Nausea", icon: AlertCircle },
-  { id: "cold_shivers", label: "Cold/Shivers", icon: Snowflake },
-  { id: "rash", label: "Rash", icon: Palette }
+  { id: "Fever", label: "Fever", icon: Thermometer },
+  { id: "Cough", label: "Cough", icon: Activity },
+  { id: "Headache", label: "Headache", icon: AlertCircle },
+  { id: "Fatigue", label: "Fatigue / Weakness", icon: Zap },
+  { id: "Body Pain", label: "Body Pain / Muscle Ache", icon: User },
+  { id: "Sore Throat", label: "Sore Throat", icon: AlertCircle },
+  { id: "Runny Nose", label: "Runny Nose", icon: Activity },
+  { id: "Difficulty Breathing", label: "Difficulty Breathing", icon: AlertCircle },
+  { id: "Chills", label: "Chills / Sweating", icon: Snowflake },
+  { id: "Loss of Taste/Smell", label: "Loss of Taste/Smell", icon: Activity },
+  { id: "Nausea", label: "Nausea / Vomiting", icon: AlertCircle },
+  { id: "Chest Pain", label: "Chest Pain", icon: AlertCircle },
+  { id: "Dizziness", label: "Dizziness", icon: AlertCircle },
+  { id: "Confusion", label: "Confusion / Mental Fog", icon: AlertCircle }
 ];
 
 const severityOptions = [
-  { value: "none", label: "None" },
-  { value: "mild", label: "Mild" },
-  { value: "moderate", label: "Moderate" },
-  { value: "severe", label: "Severe" }
+  { value: "None", label: "None" },
+  { value: "Mild", label: "Mild" },
+  { value: "Moderate", label: "Moderate" },
+  { value: "Severe", label: "Severe" }
 ];
 
 const Diagnosis = () => {
@@ -34,12 +40,12 @@ const Diagnosis = () => {
     }));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const reportedSymptoms = Object.entries(symptomSeverities)
-      .filter(([_, severity]) => severity && severity !== "none")
+      .filter(([_, severity]) => severity && severity !== "None")
       .map(([symptomId, severity]) => {
         const symptom = symptoms.find(s => s.id === symptomId);
-        return { symptom: symptom?.label || symptomId, severity };
+        return { symptom: symptom?.id || symptomId, severity };
       });
 
     if (reportedSymptoms.length === 0) {
@@ -148,18 +154,18 @@ const Diagnosis = () => {
               </div>
 
               {/* Summary */}
-              {Object.values(symptomSeverities).some(severity => severity && severity !== "none") && (
+              {Object.values(symptomSeverities).some(severity => severity && severity !== "None") && (
                 <div className="pt-6 border-t border-border/50">
                   <h3 className="text-lg font-semibold mb-4 text-foreground">Current Assessment Summary</h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {Object.entries(symptomSeverities)
-                      .filter(([_, severity]) => severity && severity !== "none")
+                      .filter(([_, severity]) => severity && severity !== "None")
                       .map(([symptomId, severity]) => {
                         const symptom = symptoms.find(s => s.id === symptomId);
                         const severityColor = 
-                          severity === "severe" ? "bg-red-100 text-red-800 border-red-200" :
-                          severity === "moderate" ? "bg-orange-100 text-orange-800 border-orange-200" :
-                          severity === "mild" ? "bg-yellow-100 text-yellow-800 border-yellow-200" :
+                          severity === "Severe" ? "bg-red-100 text-red-800 border-red-200" :
+                          severity === "Moderate" ? "bg-orange-100 text-orange-800 border-orange-200" :
+                          severity === "Mild" ? "bg-yellow-100 text-yellow-800 border-yellow-200" :
                           "bg-gray-100 text-gray-800 border-gray-200";
                         
                         return (
@@ -167,7 +173,7 @@ const Diagnosis = () => {
                             key={symptomId}
                             className={`px-3 py-2 rounded-lg border text-sm font-medium ${severityColor}`}
                           >
-                            {symptom?.label}: {severity.charAt(0).toUpperCase() + severity.slice(1)}
+                            {symptom?.label}: {String(severity).charAt(0).toUpperCase() + String(severity).slice(1)}
                           </div>
                         );
                       })}

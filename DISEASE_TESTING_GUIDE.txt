@@ -1,0 +1,239 @@
+================================================================================
+                    AI-BASED DISEASE PREDICTION SYSTEM
+                           TESTING & DEMONSTRATION GUIDE
+================================================================================
+
+This guide provides comprehensive test cases for all 14 diseases in the system.
+Use these examples to demonstrate the AI's diagnostic capabilities.
+
+================================================================================
+                                SYSTEM OVERVIEW
+================================================================================
+
+Total Diseases: 14
+Total Symptoms: 14
+CPT Tables: 196 (14 diseases × 14 symptoms)
+Model: Bayesian Network with Conditional Probability Tables
+
+================================================================================
+                                SYMPTOM LIST
+================================================================================
+
+1.  Fever                    - None, Mild, Moderate, Severe
+2.  Cough                    - None, Mild, Moderate, Severe
+3.  Headache                 - None, Mild, Moderate, Severe
+4.  Fatigue                  - None, Mild, Moderate, Severe
+5.  Body Pain                - None, Mild, Moderate, Severe
+6.  Sore Throat             - None, Mild, Moderate, Severe
+7.  Runny Nose              - None, Mild, Moderate, Severe
+8.  Difficulty Breathing     - None, Mild, Moderate, Severe
+9.  Chills                  - None, Mild, Moderate, Severe
+10. Loss of Taste/Smell     - None, Mild, Moderate, Severe
+11. Nausea                  - None, Mild, Moderate, Severe
+12. Chest Pain              - None, Mild, Moderate, Severe
+13. Dizziness               - None, Mild, Moderate, Severe
+14. Confusion               - None, Mild, Moderate, Severe
+
+================================================================================
+                                DISEASE TEST CASES
+================================================================================
+
+1. COMMON COLD
+   Key Symptoms: Runny Nose (Severe), Sore Throat (Moderate), Cough (Mild)
+   Test Case: {"Runny Nose": "Severe", "Sore Throat": "Moderate", "Cough": "Mild"}
+   Expected: High probability for Common Cold
+   Description: Viral infection of upper respiratory tract
+   Severity: Low
+
+2. INFLUENZA
+   Key Symptoms: Fever (Severe), Body Pain (Severe), Fatigue (Moderate), Headache (Moderate)
+   Test Case: {"Fever": "Severe", "Body Pain": "Severe", "Fatigue": "Moderate", "Headache": "Moderate"}
+   Expected: High probability for Influenza
+   Description: Viral infection attacking respiratory system
+   Severity: Moderate
+
+3. MALARIA
+   Key Symptoms: Fever (Severe), Chills (Severe), Fatigue (Severe), Body Pain (Moderate)
+   Test Case: {"Fever": "Severe", "Chills": "Severe", "Fatigue": "Severe", "Body Pain": "Moderate"}
+   Expected: High probability for Malaria
+   Description: Mosquito-borne parasitic disease
+   Severity: High
+
+4. DENGUE
+   Key Symptoms: Fever (Severe), Body Pain (Severe), Headache (Severe), Fatigue (Severe)
+   Test Case: {"Fever": "Severe", "Body Pain": "Severe", "Headache": "Severe", "Fatigue": "Severe"}
+   Expected: High probability for Dengue
+   Description: Mosquito-borne viral infection
+   Severity: Moderate
+
+5. TYPHOID
+   Key Symptoms: Fever (Severe), Fatigue (Severe), Headache (Moderate), Body Pain (Moderate)
+   Test Case: {"Fever": "Severe", "Fatigue": "Severe", "Headache": "Moderate", "Body Pain": "Moderate"}
+   Expected: High probability for Typhoid
+   Description: Bacterial infection from contaminated food/water
+   Severity: Moderate
+
+6. PNEUMONIA
+   Key Symptoms: Difficulty Breathing (Severe), Cough (Severe), Fever (Moderate), Chest Pain (Moderate)
+   Test Case: {"Difficulty Breathing": "Severe", "Cough": "Severe", "Fever": "Moderate", "Chest Pain": "Moderate"}
+   Expected: High probability for Pneumonia
+   Description: Lung infection inflaming air sacs
+   Severity: Moderate
+
+7. COVID-19
+   Key Symptoms: Loss of Taste/Smell (Severe), Fever (Moderate), Cough (Moderate), Fatigue (Moderate)
+   Test Case: {"Loss of Taste/Smell": "Severe", "Fever": "Moderate", "Cough": "Moderate", "Fatigue": "Moderate"}
+   Expected: High probability for COVID-19
+   Description: Coronavirus disease from SARS-CoV-2
+   Severity: Moderate
+
+8. ASTHMA
+   Key Symptoms: Difficulty Breathing (Severe), Cough (Moderate), Chest Pain (Moderate)
+   Test Case: {"Difficulty Breathing": "Severe", "Cough": "Moderate", "Chest Pain": "Moderate"}
+   Expected: High probability for Asthma
+   Description: Chronic respiratory condition
+   Severity: Moderate
+
+9. TUBERCULOSIS
+   Key Symptoms: Cough (Severe), Difficulty Breathing (Moderate), Fever (Moderate), Fatigue (Moderate)
+   Test Case: {"Cough": "Severe", "Difficulty Breathing": "Moderate", "Fever": "Moderate", "Fatigue": "Moderate"}
+   Expected: High probability for Tuberculosis
+   Description: Bacterial lung infection
+   Severity: High
+
+10. DIABETES
+    Key Symptoms: Fatigue (Severe), Difficulty Breathing (Moderate), Dizziness (Moderate)
+    Test Case: {"Fatigue": "Severe", "Difficulty Breathing": "Moderate", "Dizziness": "Moderate"}
+    Expected: High probability for Diabetes
+    Description: Chronic blood sugar regulation disorder
+    Severity: Moderate
+
+11. GASTROENTERITIS
+    Key Symptoms: Nausea (Severe), Fatigue (Moderate), Fever (Mild), Body Pain (Moderate)
+    Test Case: {"Nausea": "Severe", "Fatigue": "Moderate", "Fever": "Mild", "Body Pain": "Moderate"}
+    Expected: High probability for Gastroenteritis
+    Description: Stomach and intestinal inflammation
+    Severity: Moderate
+
+12. MIGRAINE
+    Key Symptoms: Headache (Severe), Nausea (Moderate), Dizziness (Moderate), Fatigue (Moderate)
+    Test Case: {"Headache": "Severe", "Nausea": "Moderate", "Dizziness": "Moderate", "Fatigue": "Moderate"}
+    Expected: High probability for Migraine
+    Description: Neurological condition with severe headaches
+    Severity: Moderate
+
+13. ANEMIA
+    Key Symptoms: Fatigue (Severe), Dizziness (Moderate), Difficulty Breathing (Moderate), Headache (Moderate)
+    Test Case: {"Fatigue": "Severe", "Dizziness": "Moderate", "Difficulty Breathing": "Moderate", "Headache": "Moderate"}
+    Expected: High probability for Anemia
+    Description: Low red blood cell count
+    Severity: Moderate
+
+14. ALLERGIC RHINITIS
+    Key Symptoms: Runny Nose (Severe), Sore Throat (Moderate), Cough (Mild), Headache (Mild)
+    Test Case: {"Runny Nose": "Severe", "Sore Throat": "Moderate", "Cough": "Mild", "Headache": "Mild"}
+    Expected: High probability for Allergic Rhinitis
+    Description: Allergic response in nasal passages
+    Severity: Low
+
+================================================================================
+                                QUICK TESTING COMMANDS
+================================================================================
+
+Use these commands to test the API directly:
+
+1. Test Common Cold:
+   curl -X POST http://localhost:5000/api/predict \
+   -H "Content-Type: application/json" \
+   -d '{"symptoms": {"Runny Nose": "Severe", "Sore Throat": "Moderate", "Cough": "Mild"}}'
+
+2. Test Influenza:
+   curl -X POST http://localhost:5000/api/predict \
+   -H "Content-Type: application/json" \
+   -d '{"symptoms": {"Fever": "Severe", "Body Pain": "Severe", "Fatigue": "Moderate"}}'
+
+3. Test Malaria:
+   curl -X POST http://localhost:5000/api/predict \
+   -H "Content-Type: application/json" \
+   -d '{"symptoms": {"Fever": "Severe", "Chills": "Severe", "Fatigue": "Severe"}}'
+
+4. Test COVID-19:
+   curl -X POST http://localhost:5000/api/predict \
+   -H "Content-Type: application/json" \
+   -d '{"symptoms": {"Loss of Taste/Smell": "Severe", "Fever": "Moderate", "Cough": "Moderate"}}'
+
+5. Test Migraine:
+   curl -X POST http://localhost:5000/api/predict \
+   -H "Content-Type: application/json" \
+   -d '{"symptoms": {"Headache": "Severe", "Nausea": "Moderate", "Dizziness": "Moderate"}}'
+
+================================================================================
+                                DEMONSTRATION SCENARIOS
+================================================================================
+
+SCENARIO 1: Respiratory Infection
+Symptoms: Fever (Moderate), Cough (Severe), Sore Throat (Moderate)
+Expected Results: Common Cold, Influenza, COVID-19 (high probabilities)
+
+SCENARIO 2: Tropical Disease
+Symptoms: Fever (Severe), Chills (Severe), Body Pain (Severe)
+Expected Results: Malaria, Dengue, Typhoid (high probabilities)
+
+SCENARIO 3: Neurological Condition
+Symptoms: Headache (Severe), Dizziness (Moderate), Fatigue (Moderate)
+Expected Results: Migraine, Anemia (high probabilities)
+
+SCENARIO 4: Gastrointestinal Issue
+Symptoms: Nausea (Severe), Fatigue (Moderate), Fever (Mild)
+Expected Results: Gastroenteritis (high probability)
+
+SCENARIO 5: Allergic Reaction
+Symptoms: Runny Nose (Severe), Sore Throat (Moderate), Cough (Mild)
+Expected Results: Allergic Rhinitis, Common Cold (high probabilities)
+
+================================================================================
+                                TESTING TIPS
+================================================================================
+
+1. Start with single symptoms to see baseline probabilities
+2. Add more symptoms to see how probabilities change
+3. Test edge cases with unusual symptom combinations
+4. Verify that probabilities sum to 100% across all diseases
+5. Check that the most likely disease makes medical sense
+6. Test with no symptoms (should show equal probabilities)
+
+================================================================================
+                                EXPECTED BEHAVIORS
+================================================================================
+
+✓ Probabilities should always sum to 100%
+✓ More specific symptoms should increase accuracy
+✓ Severe symptoms should have stronger impact than mild ones
+✓ Related symptoms should reinforce disease probabilities
+✓ Unrelated symptoms should not significantly affect results
+✓ The system should handle missing symptoms gracefully
+
+================================================================================
+                                TROUBLESHOOTING
+================================================================================
+
+If you encounter issues:
+
+1. Check that the Flask backend is running on port 5000
+2. Verify all symptoms are spelled exactly as shown above
+3. Ensure severity levels are exactly: None, Mild, Moderate, or Severe
+4. Check browser console for any JavaScript errors
+5. Verify the API response format matches expected structure
+
+================================================================================
+                                CONTACT & SUPPORT
+================================================================================
+
+This is a demonstration system for educational purposes.
+For medical advice, always consult qualified healthcare professionals.
+
+System Status: Active
+Last Updated: Current Session
+Version: 1.0 (14 Diseases)
+
+================================================================================
