@@ -97,7 +97,7 @@ const Results = () => {
 
         // Call backend API
         // const response = await fetch('http://172.16.238.69:5000/api/predict', {
-        const response = await fetch('http://localhost:5000/api/predict', {
+        const response = await fetch(`http://${import.meta.env.VITE_BACKEND_URL}/api/predict`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
