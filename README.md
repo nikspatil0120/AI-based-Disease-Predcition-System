@@ -38,7 +38,7 @@ graph TB
     
     subgraph "AI/ML Layer"
         Bayesian[Bayesian Network<br/>14 Diseases × 14 Symptoms]
-        Inference[Bayesian Inference<br/>P(Disease|Symptoms)]
+        Inference[Bayesian Inference<br/>P Disease given Symptoms]
         Probabilities[Probability Calculation<br/>Normalization & Ranking]
     end
     
@@ -149,7 +149,7 @@ sequenceDiagram
     B->>M: Call predict(symptoms)
     M->>D: Load CPTs for all diseases
     D-->>M: Return probability tables
-    M->>M: Calculate P(Disease|Symptoms)<br/>using Bayes' theorem
+    M->>M: Calculate P Disease given Symptoms<br/>using Bayes theorem
     M->>M: Normalize probabilities
     M-->>B: Return ranked diseases
     B->>B: Add disease descriptions
@@ -170,7 +170,7 @@ sequenceDiagram
 The system uses a Bayesian network with:
 - **Prior Probabilities**: Equal probability for all diseases (1/14)
 - **Conditional Probability Tables**: 196 CPTs (14 diseases × 14 symptoms)
-- **Bayes' Theorem**: P(Disease|Symptoms) ∝ P(Symptoms|Disease) × P(Disease)
+- **Bayes Theorem**: P(Disease given Symptoms) ∝ P(Symptoms given Disease) × P(Disease)
 - **Normalization**: Probabilities sum to 1
 
 ## 📡 API Endpoints
